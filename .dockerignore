@@ -1,0 +1,9 @@
+.idea
+
+db
+
+tests
+.env.test
+.gitignore
+Makefile
+docker-compose.yml

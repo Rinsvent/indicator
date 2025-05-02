@@ -1,0 +1,7 @@
+#!/bin/sh
+
+pwd
+cd /home/rinsvent/dev/indicator
+pwd
+docker compose pull
+docker compose up --force-recreate --no-deps -d indicator_go

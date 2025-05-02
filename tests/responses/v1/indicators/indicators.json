@@ -1,0 +1,14 @@
+[
+	{
+		"code": "phpstan",
+		"level": "critical",
+		"ttl": 20,
+		"link": "https://tc.com/phpstan",
+		"text": "Has errors",
+		"tags": [
+			"prod",
+			"ci"
+		],
+		"updatedAt": "2014-11-12T11:45:26.373Z"
+	}
+]
