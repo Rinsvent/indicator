@@ -144,3 +144,33 @@ func TestUpdateExistsIndicator(t *testing.T) {
 		t.Fatalf("Indicator count not equal 1")
 	}
 }
+
+func TestDeleteExistsIndicator(t *testing.T) {
+	updatedAt, _ := time.Parse(time.RFC3339, "2014-11-12T11:45:26.373Z")
+	service.IM().ClearAll()
+	service.IM().Persist(models.Indicator{
+		Code:      "phpstan",
+		Level:     models.CriticalLevel,
+		Ttl:       20,
+		Text:      "Has errors",
+		Tags:      []string{"prod", "ci"},
+		Link:      "https://tc.com/phpstan",
+		UpdatedAt: updatedAt,
+	})
+
+	resp := api(t).Delete("/v1/indicators/phpstan")
+
+	if resp.Code != http.StatusOK {
+		t.Fatalf("Unexpected response code: %d", resp.Code)
+	}
+
+	indicators := service.IM().Find()
+	var indicatorCount = 0
+	for _ = range indicators {
+		indicatorCount = indicatorCount + 1
+	}
+
+	if indicatorCount != 0 {
+		t.Fatalf("Indicator not deleted")
+	}
+}

@@ -19,3 +19,7 @@ type UpsertIndicatorBody struct {
 	Text  string       `json:"text"`
 	Tags  []string     `json:"tags,explode"`
 }
+
+type DeleteIndicatorRequest struct {
+	Code string `path:"code"`
+}

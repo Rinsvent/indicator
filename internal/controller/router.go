@@ -52,4 +52,10 @@ func addRoutes(api huma.API) {
 		Path:          "/v1/indicators/:code",
 		DefaultStatus: http.StatusOK,
 	}, UpsertIndicatorHandler)
+
+	huma.Register(api, huma.Operation{
+		Method:        http.MethodDelete,
+		Path:          "/v1/indicators/:code",
+		DefaultStatus: http.StatusOK,
+	}, DeleteIndicatorHandler)
 }

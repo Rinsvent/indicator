@@ -20,3 +20,8 @@ func UpsertIndicatorHandler(ctx context.Context, input *request.UpsertIndicatorR
 	service.IM().Upsert(input.Code, input.Body)
 	return &response.OkResponse{}, nil
 }
+
+func DeleteIndicatorHandler(ctx context.Context, input *request.DeleteIndicatorRequest) (*response.OkResponse, error) {
+	service.IM().Remove(input.Code)
+	return &response.OkResponse{}, nil
+}
