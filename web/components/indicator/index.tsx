@@ -27,7 +27,7 @@ export default function Indicator(data: IndicatorType) {
     return (
         <Tooltip title={data.text}>
             <IconButton>
-                <Chip icon={<Brightness1Icon style={{color: color(data.level)}}/>} label={data.code} />
+                <Chip style={{color: 'var(--foreground)'}} icon={<Brightness1Icon style={{color: color(data.level)}}/>} label={data.code} />
             </IconButton>
         </Tooltip>
     );
