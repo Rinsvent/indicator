@@ -9,18 +9,18 @@ export type TIndicatorQuery = {
 }
 
 export const indicators = async (request: TIndicatorQuery) => {
-    const doc = {
-        "code": "dj",
-        "level": "critical",
-        "text": 'Panic',
-        "tags": [
-            "env#qa",
-            "G#aml",
-            "G#admin-panel",
-        ],
-        "revisionAt": new Date(),
-    } as Indicator;
-    await saveIndicator(doc)
+    // const doc = {
+    //     "code": "dj",
+    //     "level": "critical",
+    //     "text": 'Panic',
+    //     "tags": [
+    //         "env#qa",
+    //         "G#aml",
+    //         "G#admin-panel",
+    //     ],
+    //     "revisionAt": new Date(),
+    // } as Indicator;
+    // await saveIndicator(doc)
 
     let query: any = {}
     if (request.code) {

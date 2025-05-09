@@ -5,6 +5,8 @@ import "./globals.css";
 import Grid from '@mui/material/Grid';
 import {QueryClientProvider} from "@tanstack/react-query";
 import {client} from "@/shared/lib/react-query";
+import {ThemeProvider} from "@/context/ThemeContext";
+import {ThemeToggle} from "@/components/theme/toogle";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -23,19 +25,22 @@ export default function RootLayout({
 }>) {
     return (
         <QueryClientProvider client={client}>
-            <html lang="en">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-            >
-            <Grid container spacing={2}>
-                <Grid size={{sm: 0, md: 1, lg: 2, xl: 3}}/>
-                <Grid size={{sm: 12, md: 10, lg: 8, xl: 6}}>
-                    {children}
+            <ThemeProvider>
+                <html lang="en">
+                <body
+                    className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                >
+                <Grid container spacing={2}>
+                    <Grid size={{sm: 0, md: 1, lg: 2, xl: 3}}/>
+                    <Grid size={{sm: 12, md: 10, lg: 8, xl: 6}}>
+                        <ThemeToggle />
+                        {children}
+                    </Grid>
+                    <Grid size={{sm: 0, md: 1, lg: 2, xl: 3}}/>
                 </Grid>
-                <Grid size={{sm: 0, md: 1, lg: 2, xl: 3}}/>
-            </Grid>
-            </body>
-            </html>
+                </body>
+                </html>
+            </ThemeProvider>
         </QueryClientProvider>
     );
 }

@@ -26,7 +26,7 @@ export default function IndicatorMultiSelect(data: MultiSelect) {
     };
 
     return (
-        <FormControl sx={{ m: 1, width: 300 }}>
+        <FormControl sx={{ marginTop: '10px', marginRight: '10px', width: 300 }}>
             <InputLabel id={"multiple-checkbox-label"+data.code}>{data.code}</InputLabel>
             <Select
                 labelId={"multiple-checkbox-label"+data.code}
