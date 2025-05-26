@@ -43,16 +43,22 @@ export const indicators = async (request: TIndicatorQuery) => {
         console.log('22222222222222222222', e)
     }
 
-    return data?.docs || []
+    return (data?.docs || []) as Indicator[]
     // return (await DB.allDocs({include_docs: true}));
 }
 
 export const tags = async (): Promise<string[]> => {
+    if (typeof window === 'undefined') {
+        return []
+    }
     let tags: string[] = []
     try {
+
+        // @ts-ignore
         const data = await DB.query((doc, emit) => {
             if (doc.tags && Array.isArray(doc.tags)) {
                 doc.tags.forEach(function(tag) {
+                    // @ts-ignore
                     emit(tag);
                 });
             }
@@ -61,10 +67,12 @@ export const tags = async (): Promise<string[]> => {
             reduce: function(keys, values, rereduce) {
                 // Просто возвращаем массив уникальных ключей
                 if (rereduce) {
+                    // @ts-ignore
                     return [].concat.apply([], values).filter(function(v, i, a) {
                         return a.indexOf(v) === i;
                     });
                 } else {
+                    // @ts-ignore
                     return keys.map(function(k) { return k.key; }).filter(function(v, i, a) {
                         return a.indexOf(v) === i;
                     });
@@ -72,6 +80,7 @@ export const tags = async (): Promise<string[]> => {
             }
         })
         const onlyUnique = (value: string, index: number, array: string[]) => array.indexOf(value) === index
+        // @ts-ignore
         tags = data.rows.map((row) => row.key).filter(onlyUnique);
     }catch (e) {
         console.log('333333333333333333333', e)

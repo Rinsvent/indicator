@@ -20,7 +20,7 @@ export default function IndicatorFilter(data: IndicatorFilterType) {
     const [code, setCode] = useState<string>('')
     const [filters, setFilters] = useState<Filter[]>([])
     const onInput = () => {
-        let tagList: string[] = []
+        const tagList: string[] = []
         filters.forEach((filter) => {
             filter.values.forEach((value) => {
                 tagList.push(filter.code + "#" + value)
@@ -34,7 +34,7 @@ export default function IndicatorFilter(data: IndicatorFilterType) {
 
     useEffect(() => {
        tags().then((tagList: string[]) => {
-           let result: Record<string, Filter> = {}
+           const result: Record<string, Filter> = {}
            tagList.forEach((tag) => {
                const parts = tag.split("#")
                if (parts.length === 1) {

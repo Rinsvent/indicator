@@ -6,6 +6,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -17,6 +18,7 @@ type GreetingOutput struct {
 
 func MakeRouter() http.Handler {
 	r := gin.Default()
+
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000", "https://indicator.rinsvent.ru"},
 		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE"},
@@ -36,6 +38,8 @@ func MakeRouter() http.Handler {
 	api := humagin.New(r, config)
 
 	addRoutes(api)
+
+	setupStatic(r)
 
 	return r
 }
@@ -58,4 +62,28 @@ func addRoutes(api huma.API) {
 		Path:          "/v1/indicators/:code",
 		DefaultStatus: http.StatusOK,
 	}, DeleteIndicatorHandler)
+}
+
+func setupStatic(router *gin.Engine) {
+	// Обработчик статики для всех путей, кроме API
+	router.NoRoute(func(c *gin.Context) {
+		// Пропускаем запросы, начинающиеся с /api
+		if strings.HasPrefix(c.Request.URL.Path, "/v1") {
+			c.Next()
+			return
+		}
+
+		// Проверяем существование файла
+		fs := http.Dir("./web/out")
+		filepath := c.Request.URL.Path
+		if _, err := fs.Open(filepath); err != nil {
+			// Файл не найден - отдаем index.html
+			c.Status(http.StatusNotFound)
+			c.File("./web/out/404.html")
+			return
+		}
+
+		// Отдаем статический файл
+		c.File("./web/out" + filepath)
+	})
 }
