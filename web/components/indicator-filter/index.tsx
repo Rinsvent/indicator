@@ -4,7 +4,10 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import {tags, TIndicatorQuery} from "@/db/repository";
 import IndicatorMultiSelect from "@/components/indicator-filter/multi-select";
-
+import IconButton from '@mui/material/IconButton';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import Paper from '@mui/material/Paper';
 
 type IndicatorFilterType = {
     onInput: (data: TIndicatorQuery) => void
@@ -17,6 +20,7 @@ type Filter = {
 }
 
 export default function IndicatorFilter(data: IndicatorFilterType) {
+    const [expand, setExpand] = useState<boolean>(false)
     const [code, setCode] = useState<string>('')
     const [filters, setFilters] = useState<Filter[]>([])
     const onInput = () => {
@@ -55,11 +59,21 @@ export default function IndicatorFilter(data: IndicatorFilterType) {
     }, [code])
 
     return (
-        <Box>
-            <TextField onChange={(event) => {
-                setCode(event.target.value)
-            }} fullWidth label="Code"/>
-            {filters.map((filter, key) => {
+        <Box style={{marginTop: "20px", marginBottom: "20px"}}>
+            <Paper
+                style={{backgroundColor: 'var(--background)'}}
+                component="div"
+                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center'}}
+            >
+                <IconButton type="button" sx={{ p: '10px', marginRight: '2px' }} aria-label={expand ? 'Hide filters' : 'Show filters'}>
+                    {!expand && <ExpandMoreIcon onClick={() => setExpand(true)} />}
+                    {expand && <ExpandLessIcon onClick={() => setExpand(false)} />}
+                </IconButton>
+                <TextField onChange={(event) => {
+                    setCode(event.target.value)
+                }} fullWidth label="Code"/>
+            </Paper>
+            {expand && filters.map((filter, key) => {
                 return (
                     <IndicatorMultiSelect key={key} {...filter} onChange={(values) => {
                         filter.values = values

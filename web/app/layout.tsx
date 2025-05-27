@@ -7,6 +7,7 @@ import {QueryClientProvider} from "@tanstack/react-query";
 import {client} from "@/shared/lib/react-query";
 import {ThemeProvider} from "@/context/ThemeContext";
 import {ThemeToggle} from "@/components/theme/toogle";
+import Avatar from "@/components/avatar";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -32,8 +33,10 @@ export default function RootLayout({
                 >
                 <Grid container spacing={2}>
                     <Grid size={{sm: 0, md: 1, lg: 2, xl: 3}}/>
-                    <Grid size={{sm: 12, md: 10, lg: 8, xl: 6}}>
-                        <ThemeToggle />
+                    <Grid style={{margin: '20px 0'}} size={{sm: 12, md: 10, lg: 8, xl: 6}}>
+                        <header>
+                            <ThemeToggle/> <Avatar/>
+                        </header>
                         {children}
                     </Grid>
                     <Grid size={{sm: 0, md: 1, lg: 2, xl: 3}}/>
