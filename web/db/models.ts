@@ -6,9 +6,16 @@ export enum LevelEnum {
 }
 
 export type Indicator = {
+    docType: 'indicator'
     code: string
     level: LevelEnum
     text: string
     tags: string[]
-    revisionAt: Date
+    revisionAt: string
+}
+
+export type Subscribe = {
+    docType: 'subscribe'
+    tag: string
+    createdAt: string
 }

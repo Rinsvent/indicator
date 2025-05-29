@@ -1,6 +1,7 @@
 import DB from "@/db/manager";
-import {saveIndicator} from "@/db/service";
-import {Indicator, LevelEnum} from "@/db/models";
+// import {saveIndicator} from "@/db/service";
+import {Indicator, LevelEnum, Subscribe} from "@/db/models";
+import ExistingDocument = PouchDB.Core.ExistingDocument;
 
 export type TIndicatorQuery = {
     code?: string
@@ -21,7 +22,7 @@ export const indicators = async (request: TIndicatorQuery) => {
     //     "revisionAt": new Date(),
     // } as Indicator;
     // await saveIndicator(doc)
-
+    // return []
     let query: any = {}
     if (request.code) {
         query['code'] = {$regex: request.code}
@@ -56,7 +57,7 @@ export const tags = async (): Promise<string[]> => {
 
         // @ts-ignore
         const data = await DB.query((doc, emit) => {
-            if (doc.tags && Array.isArray(doc.tags)) {
+            if (doc.docType === 'indicator' && doc.tags && Array.isArray(doc.tags)) {
                 doc.tags.forEach(function(tag) {
                     // @ts-ignore
                     emit(tag);
@@ -87,4 +88,61 @@ export const tags = async (): Promise<string[]> => {
     }
 
     return tags
+}
+
+export const subscribes = async () => {
+
+    let data = null
+    try {
+        data = await DB.find({
+            selector: {
+                'docType': "subscribe",
+            },
+        })
+    }catch (e) {
+        console.log('22222222222222222222', e)
+    }
+
+    return (data?.docs || []) as Subscribe[]
+}
+
+export const subscribeTags = async () => {
+    let tags: Record<string, string> = {}
+    try {
+        const data = await DB.find({
+            selector: {
+                'docType': "subscribe",
+            },
+        })
+        const docs = (data?.docs || []) as Subscribe[]
+        docs.forEach((subscribe: Subscribe) => {
+            tags[subscribe.tag] = subscribe.tag
+        })
+    }catch (e) {
+        console.log('22222222222222222222', e)
+    }
+
+    return tags
+}
+
+export const findSubscribeByTag = async (tag: string) => {
+
+    let data = null
+    try {
+        data = await DB.find({
+            selector: {
+                'docType': "subscribe",
+                'tag': tag,
+            },
+            limit: 1,
+        })
+    }catch (e) {
+        console.log('22222222222222222222', e)
+    }
+
+    if (data?.docs.length === 0) {
+        return null
+    }
+
+    return data?.docs[0] as ExistingDocument<Subscribe>
 }

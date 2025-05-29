@@ -43,7 +43,7 @@ export default function IndicatorList(data: IndicatorListType) {
         <Box>
             {indicators.map((indicator, key) => {
                 return (
-                    <Indicator key={key} {...indicator} />
+                    <Indicator key={key} indicator={indicator} />
                 )
             })}
         </Box>
