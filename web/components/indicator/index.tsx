@@ -2,8 +2,8 @@ import Brightness1Icon from '@mui/icons-material/Brightness1';
 import Tooltip from '@mui/material/Tooltip';
 import Chip from '@mui/material/Chip';
 import IndicatorPopup from "@/components/indicator/popup";
-import {Indicator as IndicatorDB} from "@/db/models";
-import {useState} from "react";
+import {Indicator as IndicatorDB, LevelEnum} from "@/db/models";
+import {useEffect, useState} from "react";
 
 type IndicatorType = {
     indicator: IndicatorDB
@@ -11,6 +11,7 @@ type IndicatorType = {
 
 export default function Indicator(data: IndicatorType) {
     const [showPopup, setShowPopup] = useState(false)
+    const [hasIcon, setHasIcon] = useState(true)
     const color = (level: string) => {
         switch (level) {
             case "success":
@@ -25,11 +26,29 @@ export default function Indicator(data: IndicatorType) {
         }
     }
 
+    useEffect(() => {
+        let timerId = null
+        if (data.indicator.level === LevelEnum.Critical) {
+            timerId = setInterval(() => {
+                console.log(data.indicator)
+                setHasIcon(!hasIcon)
+            }, 1000)
+        }
+
+        return () => {
+            if (timerId) {
+                clearInterval(timerId)
+            }
+        }
+    }, [hasIcon, data.indicator.level]);
+
     return (
         <>
             <Tooltip title={data.indicator.text}>
                 <Chip style={{color: 'var(--foreground)', marginRight: '10px'}}
-                      icon={<Brightness1Icon style={{color: color(data.indicator.level)}}/>}
+                      icon={hasIcon
+                          ? <Brightness1Icon style={{color: color(data.indicator.level)}}/>
+                          : <Brightness1Icon style={{color: 'rgba(0, 0, 0, 0.08)'}}/>}
                       label={data.indicator.code}
                       onClick={() => setShowPopup(true)}
                       clickable={true}
