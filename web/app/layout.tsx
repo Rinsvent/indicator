@@ -8,7 +8,7 @@ import {client} from "@/shared/lib/react-query";
 import {ThemeProvider} from "@/context/ThemeContext";
 import {ThemeToggle} from "@/components/theme/toogle";
 import Avatar from "@/components/avatar";
-import Subscribes from "@/components/subscribes";
+import dynamic from "next/dynamic";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -25,6 +25,11 @@ export default function RootLayout({
                                    }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const Subscribes = dynamic(
+        () => import('@/components/subscribes'),
+        { ssr: false }
+    );
+
     return (
         <QueryClientProvider client={client}>
             <ThemeProvider>
