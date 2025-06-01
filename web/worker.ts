@@ -29,11 +29,12 @@ async function pollServer() {
     let hasError = false
     for (const indicator of indicators) {
         saveIndicator({
+            docType: 'indicator',
             code: indicator.code,
             level: indicator.level as LevelEnum,
             tags: indicator.tags,
             text: indicator.text,
-            revisionAt: new Date(indicator.revisionAt),
+            revisionAt: indicator.revisionAt,
         })
         if (indicator.level === LevelEnum.Critical) {
             self.registration.showNotification(indicator.code, {
