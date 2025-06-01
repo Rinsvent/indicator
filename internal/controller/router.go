@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"git.rinsvent.ru/rinsvent/indicator/web"
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"io/fs"
 	"net/http"
 	"strings"
 	"time"
@@ -65,6 +67,15 @@ func addRoutes(api huma.API) {
 }
 
 func setupStatic(router *gin.Engine) {
+	// Извлекаем вложенную файловую систему
+	subFS, err := fs.Sub(web.StaticFiles, "out")
+	if err != nil {
+		panic("Failed to create sub filesystem: " + err.Error())
+	}
+
+	// Создаем обработчик файлов
+	fileServer := http.FileServer(http.FS(subFS))
+
 	// Обработчик статики для всех путей, кроме API
 	router.NoRoute(func(c *gin.Context) {
 		// Пропускаем запросы, начинающиеся с /api
@@ -73,17 +84,27 @@ func setupStatic(router *gin.Engine) {
 			return
 		}
 
-		// Проверяем существование файла
-		fs := http.Dir("./web/out")
-		filepath := c.Request.URL.Path
-		if _, err := fs.Open(filepath); err != nil {
-			// Файл не найден - отдаем index.html
-			c.Status(http.StatusNotFound)
-			c.File("./web/out/404.html")
+		// Для корневого пути
+		if c.Request.URL.Path == "/" {
+			if data, err := fs.ReadFile(subFS, "index.html"); err == nil {
+				c.Data(http.StatusOK, "text/html; charset=utf-8", data)
+				return
+			}
+		}
+
+		// Пытаемся получить файл
+		if _, err := subFS.Open(strings.TrimPrefix(c.Request.URL.Path, "/")); err == nil {
+			fileServer.ServeHTTP(c.Writer, c.Request)
 			return
 		}
 
-		// Отдаем статический файл
-		c.File("./web/out" + filepath)
+		// Fallback для SPA - отдаем 404.html
+		if data, err := fs.ReadFile(subFS, "404.html"); err == nil {
+			c.Data(http.StatusNotFound, "text/html; charset=utf-8", data)
+			return
+		}
+
+		// Если index.html не найден
+		c.Status(http.StatusNotFound)
 	})
 }
