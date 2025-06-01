@@ -11,7 +11,6 @@ type IndicatorType = {
 
 export default function Indicator(data: IndicatorType) {
     const [showPopup, setShowPopup] = useState(false)
-    const [hasIcon, setHasIcon] = useState(true)
     const color = (level: string) => {
         switch (level) {
             case "success":
@@ -26,28 +25,14 @@ export default function Indicator(data: IndicatorType) {
         }
     }
 
-    useEffect(() => {
-        let timerId = null
-        if (data.indicator.level === LevelEnum.Critical) {
-            timerId = setInterval(() => {
-                setHasIcon(!hasIcon)
-            }, 1000)
-        }
-
-        return () => {
-            if (timerId) {
-                clearInterval(timerId)
-            }
-        }
-    }, [hasIcon, data.indicator.level]);
-
     return (
         <>
             <Tooltip title={data.indicator.text}>
                 <Chip style={{color: 'var(--foreground)', marginRight: '10px'}}
-                      icon={hasIcon
-                          ? <Brightness1Icon style={{color: color(data.indicator.level)}}/>
-                          : <Brightness1Icon style={{color: 'rgba(0, 0, 0, 0.08)'}}/>}
+                      icon={<Brightness1Icon style={{
+                          color: color(data.indicator.level),
+                          animation: data.indicator.level === LevelEnum.Critical ? 'sharp-blink 1s steps(2) infinite' : undefined
+                      }}/>}
                       label={data.indicator.code}
                       onClick={() => setShowPopup(true)}
                       clickable={true}
