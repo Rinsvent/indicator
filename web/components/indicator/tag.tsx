@@ -16,7 +16,11 @@ export default function IndicatorTag({tag, isSubscribed}: IndicatorTagType) {
             icon={isSubscribed ? <NotificationsActiveIcon/> : <NotificationsOffIcon/>}
             style={{marginRight: '10px'}} key={tag} label={tag} clickable={true}
             onClick={async () => {
-                isSubscribed ? await unsubscribe(tag) : await subscribe(tag)
+                if (isSubscribed) {
+                    await unsubscribe(tag)
+                } else {
+                    await subscribe(tag)
+                }
                 await queryClient.invalidateQueries({queryKey: ['subscribeTags']})
             }}
         />

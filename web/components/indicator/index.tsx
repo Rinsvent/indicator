@@ -30,7 +30,6 @@ export default function Indicator(data: IndicatorType) {
         let timerId = null
         if (data.indicator.level === LevelEnum.Critical) {
             timerId = setInterval(() => {
-                console.log(data.indicator)
                 setHasIcon(!hasIcon)
             }, 1000)
         }
