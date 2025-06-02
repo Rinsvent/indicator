@@ -35,7 +35,7 @@ func MakeRouter() http.Handler {
 
 	config := huma.DefaultConfig("Indicators API", "1.0.0")
 	config.Servers = []*huma.Server{
-		{URL: "http://localhost"},
+		{URL: "http://localhost:8012"},
 	}
 	api := humagin.New(r, config)
 
