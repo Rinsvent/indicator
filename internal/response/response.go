@@ -27,7 +27,7 @@ type Indicator struct {
 }
 
 func BuildIndicatorsFromModels(indicators iter.Seq[*models.Indicator]) Indicators {
-	var result Indicators
+	var result = make(Indicators, 0)
 	for indicator := range indicators {
 		result = append(result, BuildIndicatorFromModel(indicator))
 	}
