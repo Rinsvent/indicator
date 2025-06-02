@@ -3,7 +3,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Chip from '@mui/material/Chip';
 import IndicatorPopup from "@/components/indicator/popup";
 import {Indicator as IndicatorDB, LevelEnum} from "@/db/models";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 type IndicatorType = {
     indicator: IndicatorDB
