@@ -1,16 +1,44 @@
 import DB from "@/db/manager";
 import {Indicator, Subscribe} from "@/db/models";
-import {findSubscribeByTag} from "@/db/repository";
+import {findSubscribeByTag, indicator} from "@/db/repository";
 import IdMeta = PouchDB.Core.IdMeta;
 import RevisionIdMeta = PouchDB.Core.RevisionIdMeta;
+import ExistingDocument = PouchDB.Core.ExistingDocument;
 
-export const saveIndicator = async (data: Indicator) => {
+export const createIndicator = async (data: Indicator) => {
     try {
+        const id  = "indicator_" + data.code
+
         const doc = {
-            "_id": "indicator_" + data.code,
+            "_id": id,
+            ...data,
+        } as Indicator & IdMeta & RevisionIdMeta;
+        const response = await DB.post(doc, {});
+        console.log('!!!!!!!!!!!!!!!!!!!!!!', response)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+export const updateIndicator = async (data: Indicator, revision: string = "") => {
+    try {
+        const id  = "indicator_" + data.code
+
+        const doc = {
+            "_id": id,
+            "_rev": revision,
             ...data,
         } as Indicator & IdMeta & RevisionIdMeta;
         const response = await DB.put(doc, {});
+        console.log('!!!!!!!!!!!!!!!!!!!!!!', response)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+export const removeIndicator = async (indicator: ExistingDocument<Indicator>) => {
+    try {
+        const response = await DB.remove(indicator);
         console.log('!!!!!!!!!!!!!!!!!!!!!!', response)
     } catch (e) {
         console.log(e)

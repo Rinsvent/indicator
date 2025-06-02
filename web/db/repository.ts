@@ -1,5 +1,4 @@
 import DB from "@/db/manager";
-// import {saveIndicator} from "@/db/service";
 import {Indicator, LevelEnum, Subscribe} from "@/db/models";
 import ExistingDocument = PouchDB.Core.ExistingDocument;
 
@@ -9,20 +8,28 @@ export type TIndicatorQuery = {
     tags?: string[]
 }
 
+export const indicator = async (id: string) => {
+
+    let data = null
+    try {
+        data = await DB.find({
+            selector: {
+                '_id': "indicator_" + id,
+            },
+        })
+    }catch (e) {
+        console.log('Error', e)
+    }
+
+    const indicator = data?.docs[0] || null
+    if (indicator === null) {
+        return null
+    }
+
+    return indicator as ExistingDocument<Indicator>
+}
+
 export const indicators = async (request: TIndicatorQuery) => {
-    // const doc = {
-    //     "code": "dj",
-    //     "level": "critical",
-    //     "text": 'Panic',
-    //     "tags": [
-    //         "env#qa",
-    //         "G#aml",
-    //         "G#admin-panel",
-    //     ],
-    //     "revisionAt": new Date(),
-    // } as Indicator;
-    // await saveIndicator(doc)
-    // return []
     let query: any = {}
     if (request.code) {
         query['code'] = {$regex: request.code}
@@ -44,8 +51,7 @@ export const indicators = async (request: TIndicatorQuery) => {
         console.log('22222222222222222222', e)
     }
 
-    return (data?.docs || []) as Indicator[]
-    // return (await DB.allDocs({include_docs: true}));
+    return (data?.docs || []) as ExistingDocument<Indicator>[]
 }
 
 export const tags = async (): Promise<string[]> => {

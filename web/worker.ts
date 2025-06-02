@@ -1,7 +1,9 @@
 import { precacheAndRoute } from 'workbox-precaching';
 import {getIndicators} from "@/sdk/indicator";
-import {saveIndicator} from "@/db/service";
-import {LevelEnum} from "@/db/models";
+import {indicators} from "@/db/repository";
+import {createIndicator, removeIndicator, updateIndicator} from "@/db/service";
+import {Indicator, LevelEnum} from "@/db/models";
+import ExistingDocument = PouchDB.Core.ExistingDocument;
 
 declare const self: ServiceWorkerGlobalScope & {
     __ENV: { API_URL: string };
@@ -17,31 +19,53 @@ self.addEventListener('install', () => {
 });
 
 async function pollServer() {
-    // const response = await fetch('/api/updates');
-    // const data = await response.json();
-    // console.log('Данные:', data);
-    // self.registration.showNotification('asdf', {
-    //     body: 'Date ' + new Date(),
-    //     icon: 'icon.png',
-    // })
-    const indicators = await getIndicators()
-
+    const apiIndicators = await getIndicators()
+    const dbIndicators = await indicators({})
     let hasError = false
-    for (const indicator of indicators) {
-        saveIndicator({
-            docType: 'indicator',
-            code: indicator.code,
-            level: indicator.level as LevelEnum,
-            tags: indicator.tags,
-            text: indicator.text,
-            revisionAt: indicator.revisionAt,
-        })
-        if (indicator.level === LevelEnum.Critical) {
-            self.registration.showNotification(indicator.code, {
-                body: 'Critical error ' + new Date(),
-                icon: 'icon.png',
-            })
+
+    let code2db: Record<string, ExistingDocument<Indicator>> = {}
+    for (const dbIndicator of dbIndicators) {
+        code2db[dbIndicator.code] = dbIndicator
+    }
+
+    let actualCodes: Record<string, boolean> = {}
+    for (const apiIndicator of apiIndicators) {
+        actualCodes[apiIndicator.code] = true
+        if (apiIndicator.level === 'critical') {
+            hasError = true
         }
+
+        const dbIndicator = code2db[apiIndicator.code]
+        const payload = {
+            docType: 'indicator',
+            code: apiIndicator.code,
+            level: apiIndicator.level as LevelEnum,
+            tags: apiIndicator.tags,
+            text: apiIndicator.text,
+            revisionAt: apiIndicator.revisionAt,
+        } as Indicator
+
+        if (dbIndicator) {
+            await updateIndicator(payload, dbIndicator._rev)
+        } else {
+            await createIndicator(payload)
+        }
+
+    }
+
+    for (const dbIndicator of dbIndicators) {
+        if (typeof actualCodes[dbIndicator.code] !== 'undefined') {
+            continue
+        }
+        // удаляем
+        await removeIndicator(dbIndicator)
+    }
+
+    if (hasError) {
+        await self.registration.showNotification('Critical Error', {
+            body: 'Critical error ' + new Date(),
+            icon: 'icon.png',
+        })
     }
 
     console.log('Date ' + new Date(), indicators)
