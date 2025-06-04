@@ -68,6 +68,14 @@ async function pollServer() {
         })
     }
 
+    self.clients.matchAll().then(clients => {
+        console.log('clients ')
+        clients.forEach(client => {
+            console.log('DB_UPDATED ', client)
+            client.postMessage({ type: 'DB_UPDATED' });
+        });
+    });
+
     console.log('Date ' + new Date(), indicators)
 
     setTimeout(pollServer, 20000);
