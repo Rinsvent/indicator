@@ -9,6 +9,8 @@ import {ThemeProvider} from "@/context/ThemeContext";
 import {ThemeToggle} from "@/components/theme/toogle";
 import Avatar from "@/components/avatar";
 import dynamic from "next/dynamic";
+import {PWA} from "@/components/pwa";
+import Documentation from "@/components/docs";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -37,11 +39,12 @@ export default function RootLayout({
                 <body
                     className={`${geistSans.variable} ${geistMono.variable} antialiased`}
                 >
+                <PWA />
                 <Grid container spacing={2}>
                     <Grid size={{sm: 0, md: 1, lg: 2, xl: 3}}/>
                     <Grid style={{margin: '20px 0'}} size={{sm: 12, md: 10, lg: 8, xl: 6}}>
                         <header>
-                            <Subscribes /><ThemeToggle/> <Avatar/>
+                            <Documentation/><Subscribes /><ThemeToggle/> <Avatar/>
                         </header>
                         {children}
                     </Grid>
