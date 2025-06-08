@@ -27,6 +27,11 @@ export default function RootLayout({
                                    }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const AddIndicator = dynamic(
+        () => import('@/components/indicator/add'),
+        { ssr: false }
+    );
+
     const Subscribes = dynamic(
         () => import('@/components/subscribes'),
         { ssr: false }
@@ -44,7 +49,7 @@ export default function RootLayout({
                     <Grid size={{sm: 0, md: 1, lg: 2, xl: 3}}/>
                     <Grid style={{margin: '20px 0'}} size={{sm: 12, md: 10, lg: 8, xl: 6}}>
                         <header>
-                            <Documentation/><Subscribes /><ThemeToggle/> <Avatar/>
+                            <Documentation/><AddIndicator/><Subscribes/><ThemeToggle/><Avatar/>
                         </header>
                         {children}
                     </Grid>

@@ -38,7 +38,7 @@ export default function Indicator(data: IndicatorType) {
                       clickable={true}
                 />
             </Tooltip>
-            <IndicatorPopup indicator={data.indicator} show={showPopup} handleClose={() => setShowPopup(false)}/>
+            <IndicatorPopup readonly={false} indicator={data.indicator} show={showPopup} handleClose={() => setShowPopup(false)}/>
         </>
     );
 }

@@ -1,10 +1,10 @@
 import Modal from '@mui/material/Modal';
 import Box from "@mui/material/Box";
-import useSubscribeTags from "@/modules/indicator/useSubscribes";
 import SubscribesTag from "@/components/subscribes/tag";
 
 type SubscribesPopupType = {
     show: boolean
+    tags: string[]
     handleClose: () => void
 }
 
@@ -20,10 +20,7 @@ const style = {
     p: 4,
 };
 
-export default function SubscribesPopup({show, handleClose}: SubscribesPopupType) {
-    const {data} = useSubscribeTags()
-    const items = Object.keys(data || {})
-
+export default function SubscribesPopup({show, tags, handleClose}: SubscribesPopupType) {
     return (
         <Modal
             open={show}
@@ -32,7 +29,7 @@ export default function SubscribesPopup({show, handleClose}: SubscribesPopupType
             aria-describedby="modal-modal-description"
         >
             <Box sx={style}>
-                {items.map((tag) => {
+                {tags.map((tag) => {
                     return <SubscribesTag key={tag} tag={tag} />
                 })}
             </Box>
