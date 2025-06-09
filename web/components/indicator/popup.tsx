@@ -12,6 +12,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import {Autocomplete, Divider, InputAdornment} from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
+import {deleteIndicator, upsertIndicator} from "@/sdk/indicator";
 
 type IndicatorPopupType = {
     indicator?: Indicator
@@ -45,15 +46,22 @@ export default function IndicatorPopup({show, handleClose, indicator, readonly}:
     return (
         <Modal
             open={show}
-            onClose={handleClose}
+            onClose={() => {
+                handleClose()
+                if (!indicator) {
+                    setCode("")
+                    setText("")
+                    setTags([])
+                }
+            }}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
             <Box sx={style}>
                 <FormControl fullWidth={true} variant="outlined">
-                    <InputLabel htmlFor="outlined-adornment-password">Code</InputLabel>
+                    <InputLabel htmlFor={`outlined-adornment-password${code}`}>Code</InputLabel>
                     <OutlinedInput
-                        id="outlined-adornment-password"
+                        id={`outlined-adornment-password${code}`}
                         onChange={(event) => {
                             setCode(event.target.value)
                         }}
@@ -68,22 +76,25 @@ export default function IndicatorPopup({show, handleClose, indicator, readonly}:
                         endAdornment={
                             <InputAdornment position="end">
                                 {canSave() && <IconButton
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        await upsertIndicator(code, {
+                                            tags: tags,
+                                            text: text,
+                                        })
                                     }}
                                 >
                                     <SaveAsOutlinedIcon/>
                                 </IconButton>}
-                                <IconButton
+                                {indicator && <IconButton
                                     // aria-label={
                                     //     showPassword ? 'hide the password' : 'display the password'
                                     // }
-                                    onClick={() => {
-                                    }}
+                                    onClick={async () => await deleteIndicator(code)}
                                     // onMouseDown={handleMouseDownPassword}
                                     // onMouseUp={handleMouseUpPassword}
                                 >
                                     <DeleteForeverOutlinedIcon/>
-                                </IconButton>
+                                </IconButton>}
                             </InputAdornment>
                         }
                     />
@@ -122,7 +133,7 @@ export default function IndicatorPopup({show, handleClose, indicator, readonly}:
                     freeSolo
                     options={Object.keys(data || {})}
                     getOptionLabel={(option) => option}
-                    defaultValue={tags}
+                    value={tags}
                     filterSelectedOptions
                     renderInput={(params) => (
                         <TextField

@@ -13,11 +13,11 @@ type UpsertIndicatorRequest struct {
 }
 
 type UpsertIndicatorBody struct {
-	Level models.Level `json:"level"`
-	Ttl   int          `json:"ttl"`
-	Link  string       `json:"link"`
-	Text  string       `json:"text"`
-	Tags  []string     `json:"tags,explode"`
+	Level models.Level `json:"level,omitempty"`
+	Ttl   int          `json:"ttl,omitempty"`
+	Link  string       `json:"link,omitempty"`
+	Text  string       `json:"text,omitempty"`
+	Tags  []string     `json:"tags,explode,omitempty"`
 }
 
 type DeleteIndicatorRequest struct {

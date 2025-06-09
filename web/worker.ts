@@ -69,7 +69,6 @@ async function pollServer() {
     }
 
     self.clients.matchAll().then(clients => {
-        console.log('clients ')
         clients.forEach(client => {
             console.log('DB_UPDATED ', client)
             client.postMessage({ type: 'DB_UPDATED' });
@@ -81,8 +80,7 @@ async function pollServer() {
     setTimeout(pollServer, 20000);
 }
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', (event: ExtendableEvent) => {
     console.log("activate")
-    console.log("NEXT_PUBLIC_ANALYTICS_ID", process.env.NEXT_PUBLIC_ANALYTICS_ID)
     event.waitUntil(pollServer());
 });
