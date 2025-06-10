@@ -4,6 +4,7 @@ import {indicators} from "@/db/repository";
 import {createIndicator, removeIndicator, updateIndicator} from "@/db/service";
 import {Indicator, LevelEnum} from "@/db/models";
 import ExistingDocument = PouchDB.Core.ExistingDocument;
+import {notify} from "@/shared/lib/notification/manager";
 
 declare const self: ServiceWorkerGlobalScope & {
     __ENV: { API_URL: string };
@@ -13,6 +14,8 @@ declare const self: ServiceWorkerGlobalScope & {
 console.log(self.__WB_MANIFEST)
 console.log(process.env)
 precacheAndRoute([]);
+
+let pushInc = 0
 
 self.addEventListener('install', () => {
     console.log('ENV ert:', self.__ENV);
@@ -61,12 +64,10 @@ async function pollServer() {
         await removeIndicator(dbIndicator)
     }
 
-    if (hasError) {
-        await self.registration.showNotification('Critical Error', {
-            body: 'Critical error ' + new Date(),
-            icon: 'icon.png',
-        })
+    if (hasError && pushInc > 0) {
+        await notify()
     }
+    pushInc++
 
     self.clients.matchAll().then(clients => {
         clients.forEach(client => {

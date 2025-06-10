@@ -9,11 +9,17 @@ type IndicatorListType = {
 }
 
 const level2Sort = (level: LevelEnum) => {
-     switch(level) {
-        case LevelEnum.Critical: return 1;
-        case LevelEnum.Error: return 2;
-        case LevelEnum.Warning: return 3;
-        case LevelEnum.Success: return 4;
+    switch (level) {
+        case LevelEnum.Critical:
+            return 1;
+        case LevelEnum.Error:
+            return 2;
+        case LevelEnum.Warning:
+            return 3;
+        case LevelEnum.Success:
+            return 4;
+        default:
+            return 5
     }
 }
 
