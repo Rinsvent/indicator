@@ -1,0 +1,7 @@
+version: '3.7'
+services:
+  indicator:
+    image: dh.rinsvent.ru/indicator
+    container_name: indicator
+    ports:
+      - 8013:8012
