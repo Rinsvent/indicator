@@ -46,3 +46,7 @@ func BuildIndicatorFromModel(indicator *models.Indicator) Indicator {
 
 	return s
 }
+
+type DeleteIndicatorMessage struct {
+	Code string `json:"code"`
+}

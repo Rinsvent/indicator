@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"git.rinsvent.ru/rinsvent/indicator/internal/response"
 	"git.rinsvent.ru/rinsvent/indicator/web"
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
+	"github.com/danielgtaylor/huma/v2/sse"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"io/fs"
@@ -64,6 +66,16 @@ func addRoutes(api huma.API) {
 		Path:          "/v1/indicators/:code",
 		DefaultStatus: http.StatusOK,
 	}, DeleteIndicatorHandler)
+
+	sse.Register(api, huma.Operation{
+		OperationID: "sse",
+		Method:      http.MethodGet,
+		Path:        "/sse",
+		Summary:     "Server sent events",
+	}, map[string]any{
+		"indicatorUpdated": response.Indicator{},
+		"indicatorDeleted": response.DeleteIndicatorMessage{},
+	}, SSEHandler)
 }
 
 func setupStatic(router *gin.Engine) {
