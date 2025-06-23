@@ -1,0 +1,25 @@
+session:
+  cookie:
+    name: auth-session
+    secure: auto
+    samesite: lax
+
+storages:
+  application_users:
+    type: memory
+    password_hasher: bcrypt
+    users:
+      rinsvent: { password: '$2y$13$jtriOmzOs3cy12SGRy.w5.wMGKjaEYCdk02ANgxCX7otqzKBn64eS' }
+      tretiakov: { password: '$2y$13$jtriOmzOs3cy12SGRy.w5.wMGKjaEYCdk02ANgxCX7otqzKBn64eS' }
+
+authenticators:
+  basic:
+    type: http_basic
+    http_basic:
+      realm: Secured Area
+
+firewalls:
+  main:
+    pattern: ^/v1
+    authenticator: basic
+    storage: application_users

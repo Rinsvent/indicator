@@ -2,14 +2,17 @@ package controller
 
 import (
 	"git.rinsvent.ru/rinsvent/indicator/internal/response"
+	"git.rinsvent.ru/rinsvent/indicator/security"
 	"git.rinsvent.ru/rinsvent/indicator/web"
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/danielgtaylor/huma/v2/sse"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/sessions"
 	"io/fs"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -21,7 +24,36 @@ type GreetingOutput struct {
 }
 
 func MakeRouter() http.Handler {
+	var store = sessions.NewCookieStore(
+		[]byte(os.Getenv("SESSION_SECRET")),         // Подпись
+		[]byte(os.Getenv("SESSION_ENCRYPTION_KEY")), // Шифрование (опционально)
+	)
+
 	r := gin.Default()
+
+	r.Use(func(c *gin.Context) {
+		session, _ := store.Get(c.Request, "auth-session")
+		if userId, ok := session.Values["userId"].(string); ok && userId != "" {
+			return
+		}
+
+		firewall, user, err := security.CheckFirewalls(c.Request)
+		if err != nil {
+			realm := firewall.GetConfigAuthenticator().HttpBasic.Realm
+			c.Header("WWW-Authenticate", `Basic realm="`+realm+`", charset="UTF-8"`)
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
+		if firewall != nil && user != nil && err == nil {
+			session.Values["userId"] = user.GetId()
+		}
+
+		if err := session.Save(c.Request, c.Writer); err != nil {
+			http.Error(c.Writer, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	})
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000", "https://indicator.rinsvent.ru"},
