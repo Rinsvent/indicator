@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"git.rinsvent.ru/rinsvent/indicator/internal/models"
 	"git.rinsvent.ru/rinsvent/indicator/internal/request"
 	"iter"
@@ -11,6 +12,22 @@ var im *IndicatorManager
 
 type IndicatorManager struct {
 	indicators map[string]*models.Indicator
+}
+
+func (im *IndicatorManager) SetUp() {
+	data, err := GetAllObjects()
+	if err != nil {
+		panic(err)
+	}
+
+	for _, obj := range data {
+		i, err := models.MapToIndicator(obj)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		im.indicators[i.Code] = i
+	}
 }
 
 func (im *IndicatorManager) Upsert(code string, d request.UpsertIndicatorBody) (*models.Indicator, bool) {
@@ -46,6 +63,9 @@ func (im *IndicatorManager) Upsert(code string, d request.UpsertIndicatorBody) (
 		i.UpdatedAt = time.Now()
 	}
 
+	tmp, _ := i.ToMap()
+	_ = UpsertObject(i.Code, tmp)
+
 	return i, hasChanges
 }
 
@@ -65,14 +85,24 @@ func (im *IndicatorManager) GrabIndicator(code string) *models.Indicator {
 
 func (im *IndicatorManager) Persist(i models.Indicator) {
 	im.indicators[i.Code] = &i
+
+	tmp, _ := i.ToMap()
+	_ = UpsertObject(i.Code, tmp)
 }
 
 func (im *IndicatorManager) Remove(code string) {
+	i, ok := im.indicators[code]
+	if ok == false {
+		return
+	}
+
+	_ = DeleteObject(i.Code)
 	delete(im.indicators, code)
 }
 
 func (im *IndicatorManager) ClearAll() {
 	im.indicators = make(map[string]*models.Indicator)
+	_, _ = ClearAllObjects()
 }
 
 func (im *IndicatorManager) Find() iter.Seq[*models.Indicator] {
@@ -94,5 +124,8 @@ func IM() *IndicatorManager {
 	im = &IndicatorManager{
 		indicators: indicators,
 	}
+
+	im.SetUp()
+
 	return im
 }
