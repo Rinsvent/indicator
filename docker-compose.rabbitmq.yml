@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  indicator_rabbitmq:
+    image: dh.rinsvent.ru/rabbitmq:3.13.7-management
+    build:
+      context: .
+      dockerfile: docker/rabbitmq/Dockerfile
+    restart: always
+    ports:
+      - "15680:15672"
+      - "5680:5672"

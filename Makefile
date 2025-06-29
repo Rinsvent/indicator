@@ -9,3 +9,6 @@ deploy:
 
 start-redis:
 	docker compose -f=docker-compose.redis.yml up indicator_redis -d
+
+start-rabbitmq:
+	docker compose -f=docker-compose.rabbitmq.yml up indicator_rabbitmq -d

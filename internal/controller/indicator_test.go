@@ -16,13 +16,13 @@ func TestGetIndicators(t *testing.T) {
 	updatedAt, _ := time.Parse(time.RFC3339, "2014-11-12T11:45:26.373Z")
 	service.IM().ClearAll()
 	service.IM().Persist(models.Indicator{
-		Code:      "phpstan",
-		Level:     models.CriticalLevel,
-		Ttl:       20,
-		Text:      "Has errors",
-		Tags:      []string{"prod", "ci"},
-		Link:      "https://tc.com/phpstan",
-		UpdatedAt: updatedAt,
+		Code:       "phpstan",
+		Level:      models.CriticalLevel,
+		Ttl:        20,
+		Text:       "Has errors",
+		Tags:       []string{"prod", "ci"},
+		Link:       "https://tc.com/phpstan",
+		RevisionAt: updatedAt,
 	})
 
 	resp := api(t).Get("/v1/indicators")
@@ -88,13 +88,13 @@ func TestUpdateExistsIndicator(t *testing.T) {
 	updatedAt, _ := time.Parse(time.RFC3339, "2014-11-12T11:45:26.373Z")
 	service.IM().ClearAll()
 	service.IM().Persist(models.Indicator{
-		Code:      "phpstan",
-		Level:     models.CriticalLevel,
-		Ttl:       20,
-		Text:      "Has errors",
-		Tags:      []string{"prod", "ci"},
-		Link:      "https://tc.com/phpstan",
-		UpdatedAt: updatedAt,
+		Code:       "phpstan",
+		Level:      models.CriticalLevel,
+		Ttl:        20,
+		Text:       "Has errors",
+		Tags:       []string{"prod", "ci"},
+		Link:       "https://tc.com/phpstan",
+		RevisionAt: updatedAt,
 	})
 
 	body := request.UpsertIndicatorBody{
@@ -149,13 +149,13 @@ func TestDeleteExistsIndicator(t *testing.T) {
 	updatedAt, _ := time.Parse(time.RFC3339, "2014-11-12T11:45:26.373Z")
 	service.IM().ClearAll()
 	service.IM().Persist(models.Indicator{
-		Code:      "phpstan",
-		Level:     models.CriticalLevel,
-		Ttl:       20,
-		Text:      "Has errors",
-		Tags:      []string{"prod", "ci"},
-		Link:      "https://tc.com/phpstan",
-		UpdatedAt: updatedAt,
+		Code:       "phpstan",
+		Level:      models.CriticalLevel,
+		Ttl:        20,
+		Text:       "Has errors",
+		Tags:       []string{"prod", "ci"},
+		Link:       "https://tc.com/phpstan",
+		RevisionAt: updatedAt,
 	})
 
 	resp := api(t).Delete("/v1/indicators/phpstan")
