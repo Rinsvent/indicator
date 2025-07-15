@@ -11,7 +11,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
 func main() {
@@ -31,7 +30,6 @@ func main() {
 					cr.AddFunc("*/5 * * * * *", func() {
 						fmt.Println("Background check was handled")
 						service.IM().Check()
-						time.Sleep(time.Second * 20)
 					})
 					cr.Start()
 
